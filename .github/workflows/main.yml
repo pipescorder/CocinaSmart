@@ -1,0 +1,39 @@
+name: Construir APK Cocina
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configurar Flutter (necesario para Flet)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          pip install flet
+
+      - name: Construir APK
+        run: |
+          flet build apk --verbose
+
+      - name: Subir el APK generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: CocinaApp-APK
+          path: build/apk/app-release.apk
